@@ -1,4 +1,5 @@
 ﻿  소스.cpp
 C:\Users\0307r\source\repos\ConFPS\ConFPS\소스.cpp(21,27): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-C:\Users\0307r\source\repos\ConFPS\ConFPS\소스.cpp(122,17): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\0307r\source\repos\ConFPS\ConFPS\소스.cpp(145,27): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\0307r\source\repos\ConFPS\ConFPS\소스.cpp(154,17): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   ConFPS.vcxproj -> C:\Users\0307r\source\repos\ConFPS\Debug\ConFPS.exe

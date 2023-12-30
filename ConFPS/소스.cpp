@@ -74,12 +74,22 @@ int main() {
 		{
 			fPlayerX += sinf(fPlayerA) * 5.0f * fElapsedTime;
 			fPlayerY += cosf(fPlayerA) * 5.0f * fElapsedTime;
+
+			if (map[(int)fPlayerY * nMapWidth + (int)fPlayerX] == '#') {
+				fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
+				fPlayerY -= cosf(fPlayerA) * 5.0f * fElapsedTime;
+			}
 		}
 
 		if (GetAsyncKeyState((unsigned short)'S') & 0x8000)
 		{
 			fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
 			fPlayerY -= cosf(fPlayerA) * 5.0f * fElapsedTime;
+
+			if (map[(int)fPlayerY * nMapWidth + (int)fPlayerX] == '#') {
+				fPlayerX += sinf(fPlayerA) * 5.0f * fElapsedTime;
+				fPlayerY += cosf(fPlayerA) * 5.0f * fElapsedTime;
+			}
 		}
 
 
@@ -91,6 +101,8 @@ int main() {
 
 			float fDistanceToWall = 0.0f;
 			bool bHitWall = false;
+			bool bBoundary = false;
+
 
 			float fEyeX = sinf(fRayAngle);             //Unit vector for ray in player space
 			float fEyeY = cosf(fRayAngle);
@@ -114,6 +126,26 @@ int main() {
 					if (map[nTestY * nMapWidth + nTestX] == '#')
 					{
 						bHitWall = true;
+
+						vector<pair<float, float>> p;  //distance, dot
+						
+						for(int tx = 0; tx < 2; tx++)
+							for (int ty = 0; ty < 2; ty++)
+							{
+								float vy = (float)nTestY + ty - fPlayerY;
+								float vx = (float)nTestX + tx - fPlayerX;
+								float d = sqrt(vx * vx + vy * vy);
+								float dot = (fEyeX * vx / d) + (fEyeY * vy / d);
+								p.push_back(make_pair(d, dot));
+							}
+
+						// Sort Pairs from closest to farthest
+						sort(p.begin(), p.end(), [](const pair<float, float>& left, const pair<float, float>& right) {return left.first < right.first; });
+
+						float fBound = 0.006;
+						if (acos(p.at(0).second) < fBound) bBoundary = true;
+						if (acos(p.at(1).second) < fBound) bBoundary = true;
+						if (acos(p.at(2).second) < fBound) bBoundary = true;
 					}
 				}
 			}
@@ -131,7 +163,9 @@ int main() {
 			else if (fDistanceToWall < fDepth)				nShade = 0x2591;
 			else											nShade = ' ';
 			
-			
+			if (bBoundary)		nShade = ' '; // Black it out
+
+
 			for (int y = 0; y < nScreenHeight; y++) 
 			{
 				if (y < nCeiling) 
@@ -149,6 +183,19 @@ int main() {
 				}
 			}
 		}
+
+		// Display Stats
+		swprintf_s(screen, 40, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", fPlayerX, fPlayerY, fPlayerA, 1.0f / fElapsedTime);
+
+		// DIsplay Map
+		for (int nx = 0; nx < nMapWidth; nx++) {
+			for (int ny = 0; ny < nMapWidth; ny++) {
+				screen[(ny + 1) * nScreenWidth + nx] = map[ny * nMapWidth + nx];
+			}
+		}
+
+		screen[((int)fPlayerY + 1) * nScreenWidth + (int)fPlayerX] = 'P';
+
 
 		screen[nScreenWidth * nScreenHeight - 1] = '\0';
 		WriteConsoleOutputCharacter(hConsole, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten);
