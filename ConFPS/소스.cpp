@@ -7,6 +7,16 @@ using namespace std;
 
 #include <stdio.h>
 #include <Windows.h>
+#include "olcConsoleGameEngine.h"
+
+class OneLoneCoder_UltimateFPS : public olcConsoleGameEngine
+{
+public:
+	OneLoneCoder_UltimateFPS()
+	{
+		m_sAppName = L"Ultimate First Person Shooter";
+	}
+};
 
 int nScreenWidth = 120;
 int nScreenHeight = 40;
@@ -18,8 +28,9 @@ float fPlayerA = 0.0f;
 int nMapHeight = 16;
 int nMapWidth = 16;
 
-float fFOV = 3.14159 / 4.0;
+float fFOV = 3.14159f / 4.0f;
 float fDepth = 16.0f;
+float fSpeed = 5.0f;
 
 int main() {
 	//스크린 버퍼 만들기
@@ -65,15 +76,15 @@ int main() {
 		// Controls
 		// Handle CCW Rotation
 		if (GetAsyncKeyState((unsigned short)'A') & 0x8000)
-			fPlayerA -= (0.8f) * fElapsedTime;
+			fPlayerA -= (fSpeed * 0.75f) * fElapsedTime;
 
 		if (GetAsyncKeyState((unsigned short)'D') & 0x8000)
-			fPlayerA += (0.8f) * fElapsedTime;
+			fPlayerA += (fSpeed * 0.75f) * fElapsedTime;
 
 		if (GetAsyncKeyState((unsigned short)'W') & 0x8000)
 		{
-			fPlayerX += sinf(fPlayerA) * 5.0f * fElapsedTime;
-			fPlayerY += cosf(fPlayerA) * 5.0f * fElapsedTime;
+			fPlayerX += sinf(fPlayerA) * fSpeed * fElapsedTime;
+			fPlayerY += cosf(fPlayerA) * fSpeed * fElapsedTime;
 
 			if (map[(int)fPlayerY * nMapWidth + (int)fPlayerX] == '#') {
 				fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
