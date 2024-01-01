@@ -16,92 +16,80 @@ public:
 	{
 		m_sAppName = L"Ultimate First Person Shooter";
 	}
-};
+	virtual bool OnUserCreate()
+	{
+		map += L"#########.......";
+		map += L"#...............";
+		map += L"#.......########";
+		map += L"#..............#";
+		map += L"#......##......#";
+		map += L"#......##......#";
+		map += L"#..............#";
+		map += L"###............#";
+		map += L"##.............#";
+		map += L"#......####..###";
+		map += L"#......#.......#";
+		map += L"#......#.......#";
+		map += L"#..............#";
+		map += L"#......#########";
+		map += L"#..............#";
+		map += L"################";
 
-int nScreenWidth = 120;
-int nScreenHeight = 40;
-
-float fPlayerX = 8.0f;
-float fPlayerY = 8.0f;
-float fPlayerA = 0.0f;
-
-int nMapHeight = 16;
-int nMapWidth = 16;
-
-float fFOV = 3.14159f / 4.0f;
-float fDepth = 16.0f;
-float fSpeed = 5.0f;
-
-int main() {
-	//스크린 버퍼 만들기
-	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
-	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-	SetConsoleActiveScreenBuffer(hConsole);
-	DWORD dwBytesWritten = 0;
-
-	wstring map;
-
-	map += L"#########.......";
-	map += L"#...............";
-	map += L"#.......########";
-	map += L"#..............#";
-	map += L"#......##......#";
-	map += L"#......##......#";
-	map += L"#..............#";
-	map += L"###............#";
-	map += L"##.............#";
-	map += L"#......####..###";
-	map += L"#......#.......#";
-	map += L"#......#.......#";
-	map += L"#..............#";
-	map += L"#......#########";
-	map += L"#..............#";
-	map += L"################";
-
-
-	auto tp1 = chrono::system_clock::now();
-	auto tp2 = chrono::system_clock::now();
-
-
-
-	// Game Loop
-	while (1) {
-
-		tp2 = chrono::system_clock::now();
-		chrono::duration<float> elapsedTime = tp2 - tp1;
-		tp1 = tp2;
-		float fElapsedTime = elapsedTime.count();
-
-
+		return true;
+	}
+	virtual bool OnUserUpdate(float fElapsedTime)
+	{
 		// Controls
 		// Handle CCW Rotation
-		if (GetAsyncKeyState((unsigned short)'A') & 0x8000)
+		if (m_keys[L'A'].bHeld)
 			fPlayerA -= (fSpeed * 0.75f) * fElapsedTime;
 
-		if (GetAsyncKeyState((unsigned short)'D') & 0x8000)
-			fPlayerA += (fSpeed * 0.75f) * fElapsedTime;
+		if (m_keys[L'D'].bHeld)
+		fPlayerA += (fSpeed * 0.75f) * fElapsedTime;
 
-		if (GetAsyncKeyState((unsigned short)'W') & 0x8000)
-		{
-			fPlayerX += sinf(fPlayerA) * fSpeed * fElapsedTime;
-			fPlayerY += cosf(fPlayerA) * fSpeed * fElapsedTime;
+		if (m_keys[L'W'].bHeld)
+	{
+		fPlayerX += sinf(fPlayerA) * fSpeed * fElapsedTime;
+		fPlayerY += cosf(fPlayerA) * fSpeed * fElapsedTime;
 
 			if (map[(int)fPlayerY * nMapWidth + (int)fPlayerX] == '#') {
-				fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
-				fPlayerY -= cosf(fPlayerA) * 5.0f * fElapsedTime;
-			}
-		}
-
-		if (GetAsyncKeyState((unsigned short)'S') & 0x8000)
-		{
 			fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
 			fPlayerY -= cosf(fPlayerA) * 5.0f * fElapsedTime;
+		}
+	}
+
+		if (m_keys[L'S'].bHeld)
+	{
+		fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
+		fPlayerY -= cosf(fPlayerA) * 5.0f * fElapsedTime;
 
 			if (map[(int)fPlayerY * nMapWidth + (int)fPlayerX] == '#') {
-				fPlayerX += sinf(fPlayerA) * 5.0f * fElapsedTime;
-				fPlayerY += cosf(fPlayerA) * 5.0f * fElapsedTime;
-			}
+			fPlayerX += sinf(fPlayerA) * 5.0f * fElapsedTime;
+			fPlayerY += cosf(fPlayerA) * 5.0f * fElapsedTime;
 		}
+	}
+	
+		return true;
+	}
+private:
+	int nMapHeight = 16;
+	int nMapWidth = 16;
+	wstring map;
+
+
+	float fPlayerX = 8.0f;
+	float fPlayerY = 8.0f;
+	float fPlayerA = 0.0f;
+	float fFOV = 3.14159f / 4.0f;
+	float fDepth = 16.0f;
+	float fSpeed = 5.0f;
+};
+
+
+int main() {
+
+
+
 
 
 
